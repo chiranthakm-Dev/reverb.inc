@@ -30,6 +30,18 @@ npm run build
 
 The build outputs static pages to `dist/` and automatically generates the sitemap.
 
+## Vercel
+
+Use Node.js 24.x. `vercel.json` configures Astro, a clean `npm ci` install,
+`npm run build`, and the `dist` output directory. Commit both `package.json`
+and `package-lock.json` when changing dependencies. The direct dependency
+versions are pinned to keep deployment installs reproducible.
+
+If retrying a failed deployment after updating these files, redeploy without
+the existing build cache. The website is static; the enquiry handler in
+`functions/api/enquiries.js` uses Cloudflare Pages Functions and needs a
+Vercel-compatible API implementation before form submissions work on Vercel.
+
 ## Cloudflare Pages
 
 1. Connect the GitHub repository to Cloudflare Pages.
