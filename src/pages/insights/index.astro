@@ -1,0 +1,5 @@
+---
+import {getCollection} from 'astro:content';import BaseLayout from '../../layouts/BaseLayout.astro'
+const posts=(await getCollection('insights',({data})=>!data.draft)).sort((a,b)=>b.data.publishedAt.valueOf()-a.data.publishedAt.valueOf())
+---
+<BaseLayout title="Insights on Voice, Localization and Storytelling | REVERB Inc." description="Practical insights from REVERB Inc. on voice, dubbing, localization, micro drama and multilingual content production."><section class="page-hero"><h1>Ideas that <em>travel well.</em></h1><p>Notes on language, production, audience and the craft behind meaningful localization.</p></section><section class="section"><div class="cards">{posts.map(post=><a class="card" href={`/insights/${post.id}/`}><time datetime={post.data.publishedAt.toISOString()}>{post.data.publishedAt.toLocaleDateString('en-IN',{dateStyle:'medium'})}</time><h2>{post.data.title}</h2><p>{post.data.description}</p><span>Read insight →</span></a>)}</div></section></BaseLayout>

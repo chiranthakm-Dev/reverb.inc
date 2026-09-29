@@ -1,0 +1,48 @@
+---
+import '../styles/global.css'
+interface Props { title: string; description: string; canonical?: string; image?: string; type?: string; noindex?: boolean; schema?: Record<string, unknown> | Record<string, unknown>[] }
+const { title, description, canonical = Astro.url.pathname, image = '/reverb-logo.png', type = 'website', noindex = false, schema } = Astro.props
+const canonicalUrl = new URL(canonical, Astro.site)
+const imageUrl = new URL(image, Astro.site)
+const turnstileEnabled = Boolean(import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
+const organization = {
+  '@context': 'https://schema.org', '@type': 'Organization', '@id': 'https://wereverb.com/#organization',
+  name: 'REVERB Inc.', url: 'https://wereverb.com/', logo: 'https://wereverb.com/reverb-logo.png',
+  description: 'A Bengaluru language and content studio for voice overs, dubbing, localization and original content.',
+  founder: { '@id': 'https://wereverb.com/about/pradeep-badekkila/#person' },
+  email: 'hello@wereverb.com', areaServed: ['India', 'International'],
+}
+---
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f4ed" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/png" href="/reverb-logo.png" />
+    <meta property="og:type" content={type} /><meta property="og:site_name" content="REVERB Inc." />
+    <meta property="og:title" content={title} /><meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} /><meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} /><meta name="twitter:image" content={imageUrl} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    {turnstileEnabled && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(organization)} />
+    {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <header class="site-header"><a class="brand" href="/"><img src="/reverb-logo.png" alt="" width="22" height="27"/><span>REVERB</span></a><nav aria-label="Primary"><a href="/services/">Services</a><a href="/work/">Work</a><a href="/about/pradeep-badekkila/">About</a><a href="/insights/">Insights</a><a href="/contact/">Enquire</a></nav></header>
+    <main><slot /></main>
+    <footer><div><h2>Reverb<span>.</span></h2><p>Root. <em>Resonate.</em> Reach.</p></div><div><a href="mailto:hello@wereverb.com">hello@wereverb.com</a><p>Bengaluru · India</p><small>© {new Date().getFullYear()} REVERB Inc.</small></div></footer>
+    <script>
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (!reduced) { const observer = new IntersectionObserver(entries => entries.forEach(entry => { if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}}),{threshold:.1});document.querySelectorAll('.section, footer').forEach(node=>observer.observe(node)) }
+    </script>
+  </body>
+</html>

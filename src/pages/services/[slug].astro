@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';import EnquiryForm from '../../components/EnquiryForm.jsx';import {services} from '../../data/site.ts'
+export function getStaticPaths(){return services.map(service=>({params:{slug:service.slug},props:{service}}))}
+const {service}=Astro.props
+const title=`${service.title} | REVERB Inc.`;const description=`${service.short} Based in Bengaluru and serving audiences across India and internationally.`
+const schema={'@context':'https://schema.org','@type':'Service',name:service.title,description:service.short,provider:{'@id':'https://wereverb.com/#organization'},areaServed:['India','International'],url:Astro.url.href}
+---
+<BaseLayout {title} {description} {schema}><section class="page-hero"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/services/">Services</a> / {service.title}</div><h1>{service.title}</h1><p>{service.short}</p></section><section class="section"><div class="studio-grid"><h2>Made for the audience, not simply converted for them.</h2><div><p>REVERB combines native-language talent, production experience, and a clear delivery workflow. Detailed process, samples, deliverables, and an approved case study will be added for this service.</p><a class="text-link" href="#enquire">Discuss this service →</a></div></div></section><section class="section" id="enquire"><h2>Start an enquiry</h2><EnquiryForm client:visible sourcePage={Astro.url.pathname}/></section></BaseLayout>

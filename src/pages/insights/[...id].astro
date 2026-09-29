@@ -1,0 +1,7 @@
+---
+import {getCollection,render} from 'astro:content';import BaseLayout from '../../layouts/BaseLayout.astro'
+export async function getStaticPaths(){const posts=await getCollection('insights',({data})=>!data.draft);return posts.map(post=>({params:{id:post.id},props:{post}}))}
+const {post}=Astro.props;const {Content}=await render(post)
+const schema={'@context':'https://schema.org','@type':'Article',headline:post.data.title,description:post.data.description,datePublished:post.data.publishedAt.toISOString(),author:{'@type':'Organization',name:post.data.author},publisher:{'@id':'https://wereverb.com/#organization'},mainEntityOfPage:Astro.url.href}
+---
+<BaseLayout title={`${post.data.title} | REVERB Insights`} description={post.data.description} type="article" {schema}><article class="prose"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/insights/">Insights</a></div><time datetime={post.data.publishedAt.toISOString()}>{post.data.publishedAt.toLocaleDateString('en-IN',{dateStyle:'long'})}</time><h1>{post.data.title}</h1><p>{post.data.description}</p><Content/></article></BaseLayout>

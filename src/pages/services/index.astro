@@ -1,0 +1,4 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';import {services} from '../../data/site.ts'
+---
+<BaseLayout title="Language and Content Services | REVERB Inc." description="Explore voice over, dubbing, localization, micro drama, AI video, digital marketing and original content services from REVERB Inc."><section class="page-hero"><h1>Services built to <em>resonate.</em></h1><p>Native-language craft and production for stories that need to travel without losing what makes them human.</p></section><section class="section"><div class="cards">{services.map(service=><a class="card" href={`/services/${service.slug}/`}><h2>{service.title}</h2><p>{service.short}</p><span>View service →</span></a>)}</div></section></BaseLayout>

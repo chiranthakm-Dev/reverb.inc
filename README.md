@@ -1,34 +1,70 @@
 # REVERB Inc.
 
-Full-stack React website for REVERB Inc. The original static page remains in `index Reverb.html` as a design reference.
+SEO-first Astro website with selective React islands, designed for static delivery through Cloudflare Pages.
 
-## Run locally
+## Stack
+
+- Astro static pages and content collections
+- React islands for the enquiry form and testimonial slider
+- Cloudflare Pages and Pages Functions
+- Cloudflare Turnstile for bot verification
+- Supabase Postgres for enquiry storage and future admin authentication
+- Resend for enquiry notifications
+
+## Local development
 
 ```bash
 npm install
-cp .env.example .env
 npm run dev
 ```
 
-Open `http://localhost:5173`. The React development server proxies `/api` to the Node API on port 8787.
+Open `http://localhost:4321`. The form API runs on Cloudflare Pages in production; use Wrangler for end-to-end local function testing.
 
-## Production
+## Verification
 
 ```bash
+npm run check
+npm test
 npm run build
-ADMIN_TOKEN="a-long-random-secret" npm start
 ```
 
-The production server serves `dist/` and stores enquiries in `data/reverb.sqlite`. Back up that file persistently when deploying. Retrieve enquiries with `GET /api/admin/enquiries` and `Authorization: Bearer <ADMIN_TOKEN>`.
+The build outputs static pages to `dist/` and automatically generates the sitemap.
 
-## Content still required
+## Cloudflare Pages
 
-- Cleared audio demo files and their language/project metadata
-- Video reel URLs
-- Approved case studies, testimonials, talent bios, and client logos
-- WhatsApp number and scheduling URL
-- Analytics site ID
-- Professional Hindi and Kannada translations
-- Email provider credentials if instant staff notifications are required
+1. Connect the GitHub repository to Cloudflare Pages.
+2. Set build command to `npm run build`.
+3. Set output directory to `dist`.
+4. Add the secrets listed in `.env.example` through the Cloudflare dashboard.
+5. Add a rate-limiting rule for `POST /api/enquiries`.
+6. Connect `wereverb.com` and redirect alternate hostnames to the canonical HTTPS hostname.
 
-The UI exposes an honest pending state for audio instead of publishing fake portfolio work. Once assets are supplied, put them in `public/audio/` and connect them through `src/data/site.js`.
+## Supabase
+
+1. Create a Supabase project in the preferred data region.
+2. Run `supabase/schema.sql` in its SQL editor.
+3. Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` only to Cloudflare's encrypted server environment.
+4. Never expose the service-role key through a `PUBLIC_` variable or browser bundle.
+5. Add admin-user policies before building the authenticated enquiry dashboard.
+
+## Turnstile and Resend
+
+- Create a Turnstile widget for the production and preview hostnames.
+- Add its secret as `TURNSTILE_SECRET` and connect the public widget key when the final domain is active.
+- Verify `wereverb.com` in Resend and configure the sender and recipient variables.
+- The Worker stores the enquiry first, then sends the staff notification.
+
+## Content
+
+Insights are Markdown files in `src/content/insights/`. Page metadata and schema are rendered into the initial HTML.
+
+Before launch, replace:
+
+- Add alternate crops or newer approved portraits if needed; the supplied founder artwork is currently published responsively
+- Placeholder founder biography with approved 100-word and 400-word versions
+- Placeholder testimonials with 3–6 permission-cleared client quotations
+- Pending audio cards with cleared demo files and metadata
+- Service-page placeholder copy with process, deliverables, samples, FAQs, and case studies
+- `public/og.png` with a 1200×630 social image
+
+The previous static implementation is retained as `legacy-index.html` for visual reference only.
